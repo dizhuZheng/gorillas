@@ -38,9 +38,9 @@ function draw() {
   drawBackground(); 
   drawBackBuildings();
   drawBuildings();
-  // drawGorilla(1);
-  // drawGorilla(2);
-  // drawBomb(); 
+  drawGorilla(1);
+  drawGorilla(2);
+  drawBomb(); 
   // Restore transformation 
   ctx.restore(); 
 }
