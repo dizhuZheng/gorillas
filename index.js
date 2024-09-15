@@ -23,7 +23,7 @@ function newGame() {
     buildings: generateBuildings(),
     bb: generateBackBuildings()
   };
-  // initializeBombPosition();
+  initializeBombPosition();
   calculateScale();
   draw();
 }
@@ -36,7 +36,7 @@ function draw() {
   ctx.scale(state.scale, state.scale);
   // // Draw scene 
   drawBackground(); 
-  drawBackBuildings();
+  //drawBackBuildings();
   drawBuildings();
   // drawGorilla(1);
   // drawGorilla(2);
@@ -45,9 +45,13 @@ function draw() {
   ctx.restore(); 
 }
 
-// Event handlers
-// ...
-// The mouseup event will trigger the throwBomb function that kicks off the main animation loop. 
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  calculateScale();
+  initializeBombPosition();
+  draw();
+});
 
 function throwBomb() {
 
@@ -55,13 +59,6 @@ function throwBomb() {
 
 function animate(timestamp) {
   // The animate function will manipulate the state in every animation cycle and call the draw function to update the screen.
-}
-
-function initializeBombPosition()
-{
-  ctx.fillStyle = "#58A8D8";
-  ctx.fillRect(0,0,canvas.width, canvas.height);
-  ctx.strokeStyle = "#ffffb3";
 }
 
 function drawBuildings()
@@ -140,7 +137,8 @@ function generateBackBuildings() {
   const maxWidth = 150;
   const minHeight = 140;
   const maxHeight = 400;
-  for (let index = 0; index < 8; index++) {
+  number = (window.innerWidth - 50 ) / maxWidth;
+  for (let index = 0; index < number; index++) {
     const previousBuilding = bb[index - 1];
 
     const x = previousBuilding
@@ -157,8 +155,8 @@ function generateBackBuildings() {
 function drawBackground()
 {
   ctx.fillStyle = "#58A8D8";
-  ctx.fillRect(0,0,canvas.width, canvas.height);
-  // drawMoon();
+  ctx.fillRect(0, 0, window.innerWidth / state.scale,window.innerHeight / state.scale);
+  drawMoon();
   // drawStar(600, 600, 5, 10, 15);
   // drawStar(200, 800, 5, 10, 15);
   // drawStar(800, 500, 5, 10, 15);
@@ -167,32 +165,28 @@ function drawBackground()
 function drawGorilla(player)
 {
   ctx.save();
-  const building =
-    player === 1
-      ? state.buildings.at(1) // Second building
-      : state.buildings.at(-2); // Second last building
-
+  const building = player === 1
+      ? state.buildings.at(1) 
+      : state.buildings.at(-2);
   ctx.translate(building.x + building.width / 2, building.height);
-
   drawGorillaBody();
   drawGorillaLeftArm(player);
   drawGorillaRightArm(player);
   drawGorillaFace();
-
   ctx.restore();
 }
 
 function drawBomb()
 {
+  ctx.fillStyle = "white";
   ctx.beginPath();
-  ctx.moveTo(state.bomb.x, state.bomb.y);
-  ctx.quadraticCurveTo(state.bomb.x * 2, state.bomb.y * 2, 230, 20);
-  ctx.stroke();
+  ctx.arc(state.bomb.x, state.bomb.y, 6, 0, 2 * Math.PI);
+  ctx.fill();
 }
 
 function drawMoon()
 {
-  ctx.arc(canvas.width-200, canvas.height-200, 50, 0, 2 * Math.PI);
+  ctx.arc((3/4)*(window.innerWidth / state.scale), (3/4)*(window.innerHeight / state.scale), 50 / state.scale, 0, 2 * Math.PI);
   ctx.fillStyle="yellow";
   ctx.fill();
 }
@@ -220,9 +214,17 @@ function drawGorillaBody()
   ctx.fill();
 }
 
-function initializeBombPosition() {
+function initializeBombPosition() 
+{
+  const building = state.currentPlayer === 1? state.buildings.at(1):state.buildings.at(-2); 
   const gorillaX = building.x + building.width / 2;
   const gorillaY = building.height;
+  const gorillaHandOffsetX = state.currentPlayer === 1 ? -28 : 28;
+  const gorillaHandOffsetY = 107;
+  state.bomb.x = gorillaX + gorillaHandOffsetX;
+  state.bomb.y = gorillaY + gorillaHandOffsetY;
+  state.bomb.velocity.x = 0;
+  state.bomb.velocity.y = 0;
 }
 
 function calculateScale()
