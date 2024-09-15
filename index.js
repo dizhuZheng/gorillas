@@ -36,7 +36,7 @@ function draw() {
   ctx.scale(state.scale, state.scale);
   // // Draw scene 
   drawBackground(); 
-  //drawBackBuildings();
+  drawBackBuildings();
   drawBuildings();
   // drawGorilla(1);
   // drawGorilla(2);
