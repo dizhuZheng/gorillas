@@ -21,6 +21,7 @@ function newGame() {
       velocity: {x:0, y:0}
     },
     buildings: generateBuildings(),
+    bb: generateBackBuildings()
   };
 
   initializeBombPosition();
@@ -37,6 +38,7 @@ function draw() {
   // // Draw scene 
   drawBackground(); 
   //drawWindmill();
+  drawBackBuildings();
   drawBuildings();
   // drawBackBuilding();
   // drawGorilla(1);
@@ -72,17 +74,27 @@ function drawBuildings()
   ctx.fillStyle = "#152A47";
   ctx.fillRect(building.x, 0, building.width, building.height);
  });
-  // for(let index=0; index<Math.random()*5; index++)
-  // {
-  //   ctx.fillRect(building.x+Math.random() * (100 - 50), building.height-Math.random() * (250-80), 20, 20);
-  // }
-  // });
+}
+
+function drawBackBuildings()
+{
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  ctx.fillStyle = "#152A47";
+  state.bb.forEach((building) => {
+    ctx.fillRect(building.x, 0, building.width, building.height);
+  });
+  ctx.restore();
+}
+
+function randomColor(){ 
+  return('#'+Math.floor(Math.random()*16777215).toString(16));
 }
 
 function generateBuildings() {
   const buildings = [];
   const minWidth = 80;
-  const maxWidth = 130;
+  const maxWidth = 150;
   const minHeight = 40;
   const maxHeight = 300;
   const minHeightGorilla = 30;
@@ -105,6 +117,28 @@ function generateBuildings() {
     buildings.push({ x, width, height });
   }
   return buildings;
+}
+
+function generateBackBuildings() {
+  const bb = [];
+  const minWidth = 80;
+  const maxWidth = 150;
+  const minHeight = 40;
+  const maxHeight = 300;
+  const width = minWidth + Math.random() * (maxWidth - minWidth);
+
+  for (let index = 0; index < 10; index++) {
+    const previousBuilding = bb[index - 1];
+
+    const x = previousBuilding
+      ? previousBuilding.x + previousBuilding.width + 4
+      : 0;
+
+    const height = Math.random() * (maxHeight - minHeight);
+
+    bb.push({ x, width, height });
+  }
+  return bb;
 }
 
 function drawBackground()
