@@ -1,6 +1,5 @@
 // The state of the game, metadata
 let state = {};
-// ...
 
 // References to HTML elements
 const canvas = document.getElementById("game");
@@ -14,6 +13,7 @@ function newGame() {
   // Initialize game state and reset it
   state = {
     phase: "aiming",
+    scale: 1,
     currentPlayer: 1,
     bomb: {
       x: undefined,
@@ -23,9 +23,8 @@ function newGame() {
     buildings: generateBuildings(),
     bb: generateBackBuildings()
   };
-
-  initializeBombPosition();
-
+  // initializeBombPosition();
+  calculateScale();
   draw();
 }
 
@@ -34,17 +33,14 @@ function draw() {
   // Flip coordinate system upside down 
   ctx.translate(0, window.innerHeight); 
   ctx.scale(1, -1); 
-
+  ctx.scale(state.scale, state.scale);
   // // Draw scene 
-  //drawBackground(); 
+  drawBackground(); 
   drawBackBuildings();
-  //drawWindmill(250,250);
-  //drawBuildings();
-  // drawBackBuilding();
+  drawBuildings();
   // drawGorilla(1);
   // drawGorilla(2);
   // drawBomb(); 
-
   // Restore transformation 
   ctx.restore(); 
 }
@@ -54,7 +50,7 @@ function draw() {
 // The mouseup event will trigger the throwBomb function that kicks off the main animation loop. 
 
 function throwBomb() {
-  // ...
+
 }
 
 function animate(timestamp) {
@@ -102,7 +98,6 @@ function drawBackBuildings()
   ctx.lineTo(state.bb[7].x+state.bb[7].width,state.bb[7].height);
   ctx.lineTo(state.bb[7].x,state.bb[7].height);
   ctx.fill();
-  //drawWindmill(state.bb[5].x + state.bb[5].width/2, state.bb[5].height);
   ctx.restore();
 }
 
@@ -119,7 +114,7 @@ function generateBuildings() {
   const minHeightGorilla = 30;
   const maxHeightGorilla = 150;
 
-  for (let index = 0; index < 10; index++) {
+  for (let index = 0; index < 8; index++) {
     const previousBuilding = buildings[index - 1];
 
     const x = previousBuilding
@@ -145,7 +140,7 @@ function generateBackBuildings() {
   const maxWidth = 150;
   const minHeight = 140;
   const maxHeight = 400;
-  for (let index = 0; index < 10; index++) {
+  for (let index = 0; index < 8; index++) {
     const previousBuilding = bb[index - 1];
 
     const x = previousBuilding
@@ -171,15 +166,28 @@ function drawBackground()
 
 function drawGorilla(player)
 {
+  ctx.save();
+  const building =
+    player === 1
+      ? state.buildings.at(1) // Second building
+      : state.buildings.at(-2); // Second last building
+
+  ctx.translate(building.x + building.width / 2, building.height);
+
   drawGorillaBody();
+  drawGorillaLeftArm(player);
+  drawGorillaRightArm(player);
+  drawGorillaFace();
+
+  ctx.restore();
 }
 
 function drawBomb()
 {
-  ctx.arc(canvas.width-Math.random() * 80, canvas.height-Math.random() * 80, 50, 0, 2 * Math.PI);
+  ctx.beginPath();
+  ctx.moveTo(state.bomb.x, state.bomb.y);
+  ctx.quadraticCurveTo(state.bomb.x * 2, state.bomb.y * 2, 230, 20);
   ctx.stroke();
-  ctx.fillStyle="yellow";
-  ctx.fill();
 }
 
 function drawMoon()
@@ -189,20 +197,6 @@ function drawMoon()
   ctx.fill();
 }
 
-function drawWindmill(x, y)
-{
-  // ctx.save();
-  // ctx.globalAlpha(0.5);
-  ctx.strokeStyle = "white";
-  ctx.lineWidth = 10;
-  ctx.beginPath();
-    ctx.moveTo(175, 50);
-    ctx.lineTo(100, 75);
-    ctx.lineTo(100, 25);
-    ctx.fill();
-  // ctx.restore();
-}
-
 function drawGorillaBody()
 {
   ctx.fillStyle = "black";
@@ -210,10 +204,11 @@ function drawGorillaBody()
   ctx.beginPath();
 
   ctx.moveTo(0, 15);
-
+  // Main Body
   ctx.lineTo(-7, 0);
   ctx.lineTo(-20, 0);
-  // Main Body
+
+  // left leg
   ctx.lineTo(-13, 77);
   ctx.lineTo(0, 84);
   ctx.lineTo(13, 77); 
@@ -223,6 +218,19 @@ function drawGorillaBody()
   ctx.lineTo(7, 0);
 
   ctx.fill();
+}
+
+function initializeBombPosition() {
+  const gorillaX = building.x + building.width / 2;
+  const gorillaY = building.height;
+}
+
+function calculateScale()
+{
+  const lastBuilding = state.buildings.at(-1);
+  const totalWidthOfTheCity = lastBuilding.x + lastBuilding.width;
+
+  state.scale = window.innerWidth / totalWidthOfTheCity;
 }
 
 function drawGorillaFace()
@@ -246,9 +254,43 @@ function drawGorillaFace()
   ctx.stroke();
 }
 
-function drawGorillaArms()
+function drawGorillaLeftArm(player)
 {
-  
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 18;
+
+  ctx.beginPath();
+  ctx.moveTo(-13, 50);
+
+  if (
+    (state.phase === "aiming" && state.currentPlayer === 1 && player === 1) ||
+    (state.phase === "celebrating" && state.currentPlayer === player)
+  ) {
+    ctx.quadraticCurveTo(-44, 63, -28, 107);
+  } else {
+    ctx.quadraticCurveTo(-44, 45, -28, 12);
+  }
+
+  ctx.stroke();
+}
+
+function drawGorillaRightArm(player)
+{
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 18;
+
+  ctx.moveTo(13, 50);
+
+  if (
+    (state.phase === "aiming" && state.currentPlayer === 2 && player === 2) ||
+    (state.phase === "celebrating" && state.currentPlayer === player)
+  ) {
+    ctx.quadraticCurveTo(44, 63, 28, 107);
+  } else {
+    ctx.quadraticCurveTo(44, 45, 28, 12);
+  }
+
+  ctx.stroke();
 }
 
 function drawStar(cx, cy, spikes, outerRadius, innerRadius) {
