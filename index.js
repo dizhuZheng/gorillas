@@ -21,6 +21,7 @@ function newGame() {
       velocity: {x:0, y:0}
     },
     buildings: generateBuildings(),
+    bb: generateBackBuildings()
   };
 
   initializeBombPosition();
@@ -35,9 +36,10 @@ function draw() {
   ctx.scale(1, -1); 
 
   // // Draw scene 
-  drawBackground(); 
-  //drawWindmill();
-  drawBuildings();
+  //drawBackground(); 
+  drawBackBuildings();
+  //drawWindmill(250,250);
+  //drawBuildings();
   // drawBackBuilding();
   // drawGorilla(1);
   // drawGorilla(2);
@@ -72,22 +74,50 @@ function drawBuildings()
   ctx.fillStyle = "#152A47";
   ctx.fillRect(building.x, 0, building.width, building.height);
  });
-  // for(let index=0; index<Math.random()*5; index++)
-  // {
-  //   ctx.fillRect(building.x+Math.random() * (100 - 50), building.height-Math.random() * (250-80), 20, 20);
-  // }
-  // });
+}
+
+function drawBackBuildings()
+{
+  ctx.save();
+  ctx.globalAlpha = 0.5;
+  ctx.fillStyle = "#152A47";
+  state.bb.forEach((building) => {
+    ctx.fillRect(building.x, 0, building.width, building.height);
+  });
+  ctx.beginPath();
+  ctx.moveTo(state.bb[3].x,state.bb[3].height);
+  ctx.lineTo(state.bb[3].x+60,state.bb[3].height+60);
+  ctx.lineTo(state.bb[3].x+state.bb[3].width,state.bb[3].height);
+  ctx.lineTo(state.bb[3].x,state.bb[3].height);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(state.bb[5].x,state.bb[5].height);
+  ctx.lineTo(state.bb[5].x+50,state.bb[5].height+50);
+  ctx.lineTo(state.bb[5].x+state.bb[5].width,state.bb[5].height);
+  ctx.lineTo(state.bb[5].x,state.bb[5].height);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(state.bb[7].x,state.bb[7].height);
+  ctx.lineTo(state.bb[7].x+70,state.bb[7].height+70);
+  ctx.lineTo(state.bb[7].x+state.bb[7].width,state.bb[7].height);
+  ctx.lineTo(state.bb[7].x,state.bb[7].height);
+  ctx.fill();
+  //drawWindmill(state.bb[5].x + state.bb[5].width/2, state.bb[5].height);
+  ctx.restore();
+}
+
+function randomColor(){ 
+  return('#'+Math.floor(Math.random()*16777215).toString(16));
 }
 
 function generateBuildings() {
   const buildings = [];
   const minWidth = 80;
-  const maxWidth = 130;
+  const maxWidth = 150;
   const minHeight = 40;
   const maxHeight = 300;
   const minHeightGorilla = 30;
   const maxHeightGorilla = 150;
-  const width = minWidth + Math.random() * (maxWidth - minWidth);
 
   for (let index = 0; index < 10; index++) {
     const previousBuilding = buildings[index - 1];
@@ -98,6 +128,8 @@ function generateBuildings() {
 
     const platformWithGorilla = index === 1 || index === 6;
 
+    const width = minWidth + Math.random() * (maxWidth - minWidth);
+
     const height = platformWithGorilla
       ? minHeightGorilla + Math.random() * (maxHeightGorilla - minHeightGorilla)
       : minHeight + Math.random() * (maxHeight - minHeight);
@@ -105,6 +137,26 @@ function generateBuildings() {
     buildings.push({ x, width, height });
   }
   return buildings;
+}
+
+function generateBackBuildings() {
+  const bb = [];
+  const minWidth = 80;
+  const maxWidth = 150;
+  const minHeight = 140;
+  const maxHeight = 400;
+  for (let index = 0; index < 10; index++) {
+    const previousBuilding = bb[index - 1];
+
+    const x = previousBuilding
+      ? previousBuilding.x + previousBuilding.width + 4
+      : 50;
+    const width = minWidth + Math.random() * (maxWidth - minWidth);
+    const height = minHeight + Math.random() * (maxHeight - minHeight);
+    
+    bb.push({ x, width, height });
+  }
+  return bb;
 }
 
 function drawBackground()
@@ -137,15 +189,18 @@ function drawMoon()
   ctx.fill();
 }
 
-function drawWindmill()
+function drawWindmill(x, y)
 {
-  // ctx.opacity = "0.3";
+  // ctx.save();
+  // ctx.globalAlpha(0.5);
   ctx.strokeStyle = "white";
-  ctx.lineWidth = 20;
+  ctx.lineWidth = 10;
   ctx.beginPath();
-  ctx.moveTo(50, 0);
-  ctx.lineTo(50, 150);
-  ctx.stroke();
+    ctx.moveTo(175, 50);
+    ctx.lineTo(100, 75);
+    ctx.lineTo(100, 25);
+    ctx.fill();
+  // ctx.restore();
 }
 
 function drawGorillaBody()
