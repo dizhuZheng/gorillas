@@ -1,6 +1,7 @@
 body {
     margin: 0;
     padding: 0;
+<<<<<<< HEAD
     font-family: monospace;
     font-size: 14px;
     color: white;
@@ -17,4 +18,6 @@ body {
     top: 20px;
     right: 25px;
     text-align: right;
+=======
+>>>>>>> main
   }
