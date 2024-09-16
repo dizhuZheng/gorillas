@@ -6,6 +6,10 @@ const canvas = document.getElementById("game");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
+// const v1 = document.querySelector("#info-left .velocity");
+// const v2 = document.querySelector("#info-right .velocity");
+// const a1 = document.querySelector("#info-left .angle");
+// const a2 = document.querySelector("#info-right .angle");
 
 newGame();
 
@@ -21,7 +25,7 @@ function newGame() {
       velocity: {x:0, y:0}
     },
     buildings: generateBuildings(),
-    bb: generateBackBuildings()
+    bb: generateBackBuildings(),
   };
   initializeBombPosition();
   calculateScale();
@@ -36,11 +40,12 @@ function draw() {
   ctx.scale(state.scale, state.scale);
   // // Draw scene 
   drawBackground(); 
-  drawMoon();
+  //drawMoon();
   // drawBackBuildings();
   drawBuildings();
+ // drawWindows();
   // drawGorilla(1);
-  drawGorilla(2);
+  //drawGorilla(2);
   // drawBomb(); 
   ctx.restore(); 
 }
@@ -74,7 +79,18 @@ function drawBuildings()
  state.buildings.forEach((building) => {
   ctx.fillStyle = "#152A47";
   ctx.fillRect(building.x, 0, building.width, building.height);
+  drawWindows(building.x, building.height, building.width, building.height);
  });
+}
+
+function drawWindows(a, b, c, d)
+{
+  const e = a  * 1.1;
+  const f = b * 0.7;
+  const h = c * 0.09;
+  const i = d * 0.09;
+  ctx.fillStyle = "#e6b800";
+  ctx.fillRect(e, f, h, i);
 }
 
 function drawBackBuildings()
@@ -104,10 +120,6 @@ function drawBackBuildings()
   ctx.lineTo(state.bb[5].x,state.bb[5].height);
   ctx.fill();
   ctx.restore();
-}
-
-function randomColor(){ 
-  return('#'+Math.floor(Math.random()*16777215).toString(16));
 }
 
 function generateBuildings() {
