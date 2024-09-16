@@ -190,7 +190,7 @@ function drawBomb()
 
 function drawMoon()
 {
-  ctx.arc((3/4)*(window.innerWidth / state.scale), (3/4)*(window.innerHeight / state.scale), 50, 0, 2 * Math.PI);
+  ctx.arc(window.innerWidth-200, window.innerHeight-200, 50, 0, 2 * Math.PI);
   ctx.fillStyle="yellow";
   ctx.fill();
 }
@@ -295,6 +295,5 @@ function drawGorillaRightArm(player)
   } else {
     ctx.quadraticCurveTo(44, 45, 28, 12);
   }
-
   ctx.stroke();
 }
