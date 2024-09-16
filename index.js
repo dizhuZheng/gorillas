@@ -11,6 +11,12 @@ newGame();
 
 function newGame() {
   // Initialize game state and reset it
+
+  const velocity1 = document.querySelector("#info-left .velocity");
+  const velocity2 = document.querySelector("#info-right .velocity");
+  const angle1 = document.querySelector("#info-left .angle");
+  const angle2 = document.querySelectorl("#info-right .angle");
+
   state = {
     phase: "aiming",
     scale: 1,
@@ -296,4 +302,9 @@ function drawGorillaRightArm(player)
     ctx.quadraticCurveTo(44, 45, 28, 12);
   }
   ctx.stroke();
+}
+
+function updateInfo(currentPlayer)
+{
+
 }
