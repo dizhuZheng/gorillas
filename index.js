@@ -37,11 +37,11 @@ function draw() {
   // // Draw scene 
   drawBackground(); 
   drawMoon();
-  drawBackBuildings();
+  // drawBackBuildings();
   drawBuildings();
-  drawGorilla(1);
+  // drawGorilla(1);
   drawGorilla(2);
-  drawBomb(); 
+  // drawBomb(); 
   ctx.restore(); 
 }
 
@@ -190,7 +190,7 @@ function drawBomb()
 
 function drawMoon()
 {
-  ctx.arc(window.innerWidth-200, window.innerHeight-200, 50, 0, 2 * Math.PI);
+  ctx.arc((3/4)*window.innerWidth/state.scale, (3/4)*window.innerHeight/state.scale, (1/20)*window.innerWidth/state.scale, 0, 2 * Math.PI);
   ctx.fillStyle="yellow";
   ctx.fill();
 }
