@@ -6,10 +6,12 @@ const canvas = document.getElementById("game");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
-// const v1 = document.querySelector("#info-left .velocity");
+const v1 = document.querySelector("#info-left .velocity");
 // const v2 = document.querySelector("#info-right .velocity");
-// const a1 = document.querySelector("#info-left .angle");
+const a1 = document.querySelector("#info-left .angle");
 // const a2 = document.querySelector("#info-right .angle");
+const bombGrab = document.querySelector("#bomb-grab-area");
+const grabAreaRadius = 15;
 
 newGame();
 
@@ -27,14 +29,20 @@ function newGame() {
     buildings: generateBuildings(),
     //bb: generateBackBuildings(),
   };
-  initializeBombPosition();
   calculateScale();
+  initializeBombPosition();
   draw();
 }
+// window.addEventListener("mousedown", function(event) {
+  
+// });
 
-window.addEventListener("mousedown", function(e) {
-  drawLine(state.bomb.x, state.bomb.y, e.offsetX, e.offsetY);
-});
+function mouseOver() {
+  alert('hahaha');
+}
+
+// document.getElementById("demo").onmouseout = function() {mouseOut()};
+
 
 function draw() {
   ctx.save(); 
@@ -62,8 +70,11 @@ window.addEventListener("resize", () => {
   draw();
 });
 
-window.addEventListener("mousemove", function(e) {
-
+window.addEventListener("mouseover", function(e) {
+  if (e.clientX == bombGrab && e.clientY == bombGrab)
+  {
+    this.alert('hehe');
+  }
 });
 
 
@@ -255,6 +266,8 @@ function initializeBombPosition()
   const gorillaHandOffsetY = 107;
   state.bomb.x = gorillaX + gorillaHandOffsetX;
   state.bomb.y = gorillaY + gorillaHandOffsetY;
+  bombGrab.style.left = state.bomb.x * state.scale - grabAreaRadius + "px";
+  bombGrab.style.bottom = state.bomb.y * state.scale - grabAreaRadius + "px";
   state.bomb.velocity.x = 0;
   state.bomb.velocity.y = 0;
 }
