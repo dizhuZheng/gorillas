@@ -25,12 +25,16 @@ function newGame() {
       velocity: {x:0, y:0}
     },
     buildings: generateBuildings(),
-    bb: generateBackBuildings(),
+    //bb: generateBackBuildings(),
   };
   initializeBombPosition();
   calculateScale();
   draw();
 }
+
+window.addEventListener("mousedown", function(e) {
+  drawLine(state.bomb.x, state.bomb.y, e.offsetX, e.offsetY);
+});
 
 function draw() {
   ctx.save(); 
@@ -42,11 +46,11 @@ function draw() {
   drawBackground(); 
   //drawMoon();
   // drawBackBuildings();
-  drawBuildings();
+  //drawBuildings();
  // drawWindows();
-  // drawGorilla(1);
+  drawGorilla(1);
   //drawGorilla(2);
-  // drawBomb(); 
+  drawBomb(); 
   ctx.restore(); 
 }
 
@@ -62,9 +66,6 @@ window.addEventListener("mousemove", function(e) {
 
 });
 
-window.addEventListener("click", function(e) {
-  
-});
 
 function throwBomb() {
 
@@ -72,6 +73,21 @@ function throwBomb() {
 
 function animate(timestamp) {
   // The animate function will manipulate the state in every animation cycle and call the draw function to update the screen.
+}
+
+function drawLine(x1, y1, x2, y2) {
+  ctx.save(); 
+  ctx.translate(0, window.innerHeight); 
+  ctx.scale(1, -1); 
+  ctx.scale(state.scale, state.scale);
+  ctx.beginPath();
+  ctx.strokeStyle = "black";
+  ctx.setLineDash([5, 15]);
+  ctx.lineWidth = 1;
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function drawBuildings()
