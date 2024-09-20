@@ -6,10 +6,12 @@ const canvas = document.getElementById("game");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
-// const v1 = document.querySelector("#info-left .velocity");
+const v1 = document.querySelector("#info-left .velocity");
 // const v2 = document.querySelector("#info-right .velocity");
-// const a1 = document.querySelector("#info-left .angle");
+const a1 = document.querySelector("#info-left .angle");
 // const a2 = document.querySelector("#info-right .angle");
+const bombGrab = document.querySelector("#bomb-grab-area");
+const grabAreaRadius = 15;
 
 newGame();
 
@@ -27,13 +29,21 @@ function newGame() {
     buildings: generateBuildings(),
     //bb: generateBackBuildings(),
   };
-  initializeBombPosition();
   calculateScale();
+  initializeBombPosition();
   draw();
 }
 
-window.addEventListener("mousedown", function(e) {
-  drawLine(state.bomb.x, state.bomb.y, e.offsetX, e.offsetY);
+bombGrab.addEventListener("mousedown", (e) => {
+  var angleDeg = Math.atan2(state.bomb.y - e.screenY, state.bomb.x - e.screenX ) * 180 / Math.PI;
+  a1.innerHTML = angleDeg;
+  drawLine(state.bomb.x, state.bomb.y);
+});
+
+bombGrab.addEventListener("mousemove", (e) => {
+  var angleDeg = Math.atan2(state.bomb.y - e.screenY, state.bomb.x - e.screenX ) * 180 / Math.PI;
+  a1.innerHTML = angleDeg;
+  drawLine(e.screenX, e.screenY);
 });
 
 function draw() {
@@ -62,20 +72,16 @@ window.addEventListener("resize", () => {
   draw();
 });
 
-window.addEventListener("mousemove", function(e) {
 
-});
+// function throwBomb() {
 
+// }
 
-function throwBomb() {
+// function animate(timestamp) {
+//   // The animate function will manipulate the state in every animation cycle and call the draw function to update the screen.
+// }
 
-}
-
-function animate(timestamp) {
-  // The animate function will manipulate the state in every animation cycle and call the draw function to update the screen.
-}
-
-function drawLine(x1, y1, x2, y2) {
+function drawLine(x, y) {
   ctx.save(); 
   ctx.translate(0, window.innerHeight); 
   ctx.scale(1, -1); 
@@ -84,8 +90,8 @@ function drawLine(x1, y1, x2, y2) {
   ctx.strokeStyle = "black";
   ctx.setLineDash([5, 15]);
   ctx.lineWidth = 1;
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + 100, y + 100);
   ctx.stroke();
   ctx.restore();
 }
@@ -255,6 +261,8 @@ function initializeBombPosition()
   const gorillaHandOffsetY = 107;
   state.bomb.x = gorillaX + gorillaHandOffsetX;
   state.bomb.y = gorillaY + gorillaHandOffsetY;
+  bombGrab.style.left = state.bomb.x * state.scale - grabAreaRadius + "px";
+  bombGrab.style.bottom = state.bomb.y * state.scale - grabAreaRadius + "px";
   state.bomb.velocity.x = 0;
   state.bomb.velocity.y = 0;
 }
