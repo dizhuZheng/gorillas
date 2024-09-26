@@ -12,6 +12,7 @@ const a1 = document.querySelector("#info-left .angle");
 // const a2 = document.querySelector("#info-right .angle");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
+const b = document.querySelector("body");
 
 newGame();
 
@@ -21,6 +22,7 @@ function newGame() {
     phase: "aiming",
     scale: 1,
     currentPlayer: 1,
+    flag: false,
     bomb: {
       x: undefined,
       y: undefined,
@@ -35,15 +37,12 @@ function newGame() {
 }
 
 bombGrab.addEventListener("mousedown", (e) => {
-  var angleDeg = Math.atan2(state.bomb.y - e.screenY, state.bomb.x - e.screenX ) * 180 / Math.PI;
-  a1.innerHTML = angleDeg;
-  drawLine(state.bomb.x, state.bomb.y);
-});
-
-bombGrab.addEventListener("mousemove", (e) => {
-  var angleDeg = Math.atan2(state.bomb.y - e.screenY, state.bomb.x - e.screenX ) * 180 / Math.PI;
-  a1.innerHTML = angleDeg;
-  drawLine(e.screenX, e.screenY);
+  // state.flag = true;
+  b.style.cursor = "grab";
+  window.addEventListener("mouseup", (e) => {
+    // state.flag = true;
+    b.style.cursor = "default";
+  });
 });
 
 function draw() {
