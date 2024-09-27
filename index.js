@@ -35,6 +35,15 @@ function newGame() {
   initializeBombPosition();
   draw();
 }
+// window.addEventListener("mousedown", function(event) {
+  
+// });
+
+function mouseOver() {
+  alert('hahaha');
+}
+
+// document.getElementById("demo").onmouseout = function() {mouseOut()};
 
 bombGrab.addEventListener("mousedown", (e) => {
   // state.flag = true;
