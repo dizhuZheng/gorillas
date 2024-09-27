@@ -40,6 +40,8 @@ bombGrab.addEventListener("mousedown", (e) => {
   if (state.phase === "aiming")
   {
     flag = true;
+    dragX = e.clientX;
+    dragY = e.clientY;
     document.body.style.cursor = "grab";
   }
 });
@@ -47,11 +49,11 @@ bombGrab.addEventListener("mousedown", (e) => {
 window.addEventListener("mousemove", (e) => {
   if (flag == true)
   {
-    let differenceX = e.offsetX - state.bomb.x;
-    let differenceY = e.offsetY - state.bomb.y;
+    let differenceX = e.clientX - dragX;
+    let differenceY = e.clientY - dragY;
     drawLine(-differenceX, -differenceY);
-    let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
-    v1.innerHTML = Math.floor(difference);
+    // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
+    // v1.innerHTML = Math.floor(difference);
   }
 });
 
@@ -62,6 +64,22 @@ window.addEventListener("mouseup", (e) => {
     flag = false;
   }
 });
+
+function drawLine(x, y) {
+  ctx.save(); 
+  // Flip coordinate system upside down 
+  ctx.translate(0, window.innerHeight); 
+  ctx.scale(1, -1); 
+  ctx.scale(state.scale, state.scale);
+  ctx.beginPath();
+  ctx.strokeStyle = "white";
+  ctx.setLineDash([5, 10]);
+  ctx.lineWidth = 1;
+  ctx.moveTo(state.bomb.x, state.bomb.y);
+  ctx.lineTo(state.bomb.x+x , state.bomb.y-y);
+  ctx.stroke();
+  ctx.restore();
+}
 
 function draw() {
   ctx.save(); 
@@ -97,22 +115,6 @@ window.addEventListener("resize", () => {
 // function animate(timestamp) {
 //   // The animate function will manipulate the state in every animation cycle and call the draw function to update the screen.
 // }
-
-function drawLine(x, y) {
-  ctx.save(); 
-  // Flip coordinate system upside down 
-  ctx.translate(0, window.innerHeight); 
-  ctx.scale(1, -1); 
-  ctx.scale(state.scale, state.scale);
-  ctx.beginPath();
-  ctx.strokeStyle = "white";
-  ctx.setLineDash([5, 10]);
-  ctx.lineWidth = 1;
-  ctx.moveTo(state.bomb.x, state.bomb.y);
-  ctx.lineTo(x , y);
-  ctx.stroke();
-  ctx.restore();
-}
 
 function drawBuildings()
 {
