@@ -17,7 +17,7 @@ newGame();
 
 function newGame() {
   state = {
-    phase: "aiming"||"flying"||"celebrating",
+    phase: "aiming",
     scale: 1,
     currentPlayer: 1,
     flag: false, // isDragging
@@ -51,7 +51,10 @@ window.addEventListener("mousemove", (e) => {
   {
     let differenceX = e.clientX - dragX;
     let differenceY = e.clientY - dragY;
-    drawLine(-differenceX, -differenceY);
+    state.bomb.velocity.x = -differenceX;
+    state.bomb.velocity.y = -differenceY;
+    draw();
+    //drawLine(-differenceX, -differenceY);
     // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
     // v1.innerHTML = Math.floor(difference);
   }
@@ -64,22 +67,6 @@ window.addEventListener("mouseup", (e) => {
     flag = false;
   }
 });
-
-function drawLine(x, y) {
-  ctx.save(); 
-  // Flip coordinate system upside down 
-  ctx.translate(0, window.innerHeight); 
-  ctx.scale(1, -1); 
-  ctx.scale(state.scale, state.scale);
-  ctx.beginPath();
-  ctx.strokeStyle = "white";
-  ctx.setLineDash([5, 10]);
-  ctx.lineWidth = 1;
-  ctx.moveTo(state.bomb.x, state.bomb.y);
-  ctx.lineTo(state.bomb.x+x , state.bomb.y-y);
-  ctx.stroke();
-  ctx.restore();
-}
 
 function draw() {
   ctx.save(); 
@@ -236,6 +223,16 @@ function drawGorilla(player)
 
 function drawBomb()
 {
+  if (state.phase == "aiming")
+  {
+    ctx.beginPath();
+    ctx.strokeStyle = "white";
+    ctx.setLineDash([5, 10]);
+    ctx.lineWidth = 1;
+    ctx.moveTo(state.bomb.x, state.bomb.y);
+    ctx.lineTo(state.bomb.x+state.bomb.velocity.x, state.bomb.y-state.bomb.velocity.y);
+    ctx.stroke();
+  }
   ctx.fillStyle = "white";
   ctx.beginPath();
   ctx.arc(state.bomb.x, state.bomb.y, 6, 0, 2 * Math.PI);
