@@ -12,17 +12,17 @@ const a1 = document.querySelector("#info-left .angle");
 // const a2 = document.querySelector("#info-right .angle");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
-const b = document.querySelector("body");
-
+//const line = document.querySelector("draw-line");
 newGame();
 
 function newGame() {
-  // Initialize game state and reset it
   state = {
-    phase: "aiming",
+    phase: "aiming"||"flying"||"celebrating",
     scale: 1,
     currentPlayer: 1,
-    flag: false,
+    flag: false, // isDragging
+    dragX: undefined,
+    dragY: undefined,
     bomb: {
       x: undefined,
       y: undefined,
@@ -35,23 +35,32 @@ function newGame() {
   initializeBombPosition();
   draw();
 }
-// window.addEventListener("mousedown", function(event) {
-  
-// });
-
-function mouseOver() {
-  alert('hahaha');
-}
-
-// document.getElementById("demo").onmouseout = function() {mouseOut()};
 
 bombGrab.addEventListener("mousedown", (e) => {
-  // state.flag = true;
-  b.style.cursor = "grab";
-  window.addEventListener("mouseup", (e) => {
-    // state.flag = true;
-    b.style.cursor = "default";
-  });
+  if (state.phase === "aiming")
+  {
+    flag = true;
+    document.body.style.cursor = "grab";
+  }
+});
+
+window.addEventListener("mousemove", (e) => {
+  if (flag == true)
+  {
+    let differenceX = e.offsetX - state.bomb.x;
+    let differenceY = e.offsetY - state.bomb.y;
+    drawLine(-differenceX, -differenceY);
+    let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
+    v1.innerHTML = Math.floor(difference);
+  }
+});
+
+window.addEventListener("mouseup", (e) => {
+  if (flag == true) {
+    document.body.style.cursor = "default";
+    v1.innerHTML = 0;
+    flag = false;
+  }
 });
 
 function draw() {
@@ -91,15 +100,16 @@ window.addEventListener("resize", () => {
 
 function drawLine(x, y) {
   ctx.save(); 
+  // Flip coordinate system upside down 
   ctx.translate(0, window.innerHeight); 
   ctx.scale(1, -1); 
   ctx.scale(state.scale, state.scale);
   ctx.beginPath();
-  ctx.strokeStyle = "black";
-  ctx.setLineDash([5, 15]);
+  ctx.strokeStyle = "white";
+  ctx.setLineDash([5, 10]);
   ctx.lineWidth = 1;
-  ctx.moveTo(x, y);
-  ctx.lineTo(x + 100, y + 100);
+  ctx.moveTo(state.bomb.x, state.bomb.y);
+  ctx.lineTo(x , y);
   ctx.stroke();
   ctx.restore();
 }
