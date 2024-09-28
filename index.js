@@ -54,9 +54,10 @@ window.addEventListener("mousemove", (e) => {
     state.bomb.velocity.x = -differenceX;
     state.bomb.velocity.y = -differenceY;
     draw();
-    //drawLine(-differenceX, -differenceY);
-    // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
-    // v1.innerHTML = Math.floor(difference);
+    //let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
+    //v1.innerHTML = Math.floor(difference);
+    let k = Math.abs(differenceY / differenceX);
+    a1.innerHTML = Math.atan(k)/ Math.PI * 180;
   }
 });
 
