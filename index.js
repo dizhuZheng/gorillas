@@ -54,9 +54,17 @@ window.addEventListener("mousemove", (e) => {
     state.bomb.velocity.x = -differenceX;
     state.bomb.velocity.y = -differenceY;
     draw();
-    //drawLine(-differenceX, -differenceY);
-    // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
-    // v1.innerHTML = Math.floor(difference);
+    let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
+    let k = differenceY / differenceX;
+    if(currentPlayer == 1)
+    {
+      v1.innerHTML = Math.floor(difference);
+      a1.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    }
+    else{
+      v2.innerHTML = Math.floor(difference);
+      a2.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    }
   }
 });
 
