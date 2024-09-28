@@ -12,7 +12,8 @@ const a1 = document.querySelector("#info-left .angle");
 // const a2 = document.querySelector("#info-right .angle");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
-//const line = document.querySelector("draw-line");
+const bomb = document.querySelector("#bomb");
+
 newGame();
 
 function newGame() {
@@ -54,17 +55,17 @@ window.addEventListener("mousemove", (e) => {
     state.bomb.velocity.x = -differenceX;
     state.bomb.velocity.y = -differenceY;
     draw();
-    let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
-    let k = differenceY / differenceX;
-    if(currentPlayer == 1)
-    {
-      v1.innerHTML = Math.floor(difference);
-      a1.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
-    }
-    else{
-      v2.innerHTML = Math.floor(difference);
-      a2.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
-    }
+    // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
+    // let k = differenceY / differenceX;
+    // if(currentPlayer == 1)
+    // {
+    //   v1.innerHTML = Math.floor(difference);
+    //   a1.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    // }
+    // else{
+    //   v2.innerHTML = Math.floor(difference);
+    //   a2.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    // }
   }
 });
 
@@ -74,6 +75,7 @@ window.addEventListener("mouseup", (e) => {
     v1.innerHTML = 0;
     flag = false;
   }
+  throwBomb();
 });
 
 function draw() {
@@ -102,10 +104,23 @@ window.addEventListener("resize", () => {
   draw();
 });
 
-
-// function throwBomb() {
-
-// }
+function throwBomb() {
+  state.phase = "flying";
+  let id = null;   
+  let pos = 0;
+  clearInterval(id);
+  id = setInterval(frame, 5);
+  function frame() {
+    if (pos == 1) {
+      clearInterval(id);
+    } else {
+      pos++; 
+      state.bomb.x += state.bomb.velocity.x;
+      state.bomb.y -= state.bomb.velocity.y; 
+    }
+    draw();
+  }
+}
 
 // function animate(timestamp) {
 //   // The animate function will manipulate the state in every animation cycle and call the draw function to update the screen.
@@ -197,13 +212,11 @@ function generateBackBuildings() {
   number = (window.innerWidth - 50 ) / maxWidth;
   for (let index = 0; index < number; index++) {
     const previousBuilding = bb[index - 1];
-
     const x = previousBuilding
       ? previousBuilding.x + previousBuilding.width + 4
       : 50;
     const width = minWidth + Math.random() * (maxWidth - minWidth);
-    const height = minHeight + Math.random() * (maxHeight - minHeight);
-    
+    const height = minHeight + Math.random() * (maxHeight - minHeight); 
     bb.push({ x, width, height });
   }
   return bb;
