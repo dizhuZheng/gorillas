@@ -12,7 +12,6 @@ const a1 = document.querySelector("#info-left .angle");
 // const a2 = document.querySelector("#info-right .angle");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
-const bomb = document.querySelector("#bomb");
 
 newGame();
 
@@ -35,17 +34,18 @@ function newGame() {
   calculateScale();
   initializeBombPosition();
   draw();
+  throwBomb();
 }
 
-bombGrab.addEventListener("mousedown", (e) => {
-  if (state.phase === "aiming")
-  {
-    flag = true;
-    dragX = e.clientX;
-    dragY = e.clientY;
-    document.body.style.cursor = "grab";
-  }
-});
+// bombGrab.addEventListener("mousedown", (e) => {
+//   if (state.phase === "aiming")
+//   {
+//     flag = true;
+//     dragX = e.clientX;
+//     dragY = e.clientY;
+//     document.body.style.cursor = "grab";
+//   }
+// });
 
 window.addEventListener("mousemove", (e) => {
   if (flag == true)
@@ -90,7 +90,7 @@ function draw() {
   // drawBackBuildings();
   //drawBuildings();
  // drawWindows();
-  drawGorilla(1);
+  //drawGorilla(1);
   //drawGorilla(2);
   drawBomb(); 
   ctx.restore(); 
@@ -106,25 +106,51 @@ window.addEventListener("resize", () => {
 
 function throwBomb() {
   state.phase = "flying";
-  let id = null;   
-  let pos = 0;
-  clearInterval(id);
-  id = setInterval(frame, 5);
-  function frame() {
-    if (pos == 1) {
-      clearInterval(id);
-    } else {
-      pos++; 
+  animate({
+    duration: 2000,
+    timing: function (timeFraction) {
+      return timeFraction;
+    },
+    draw: function(progress) {
+      state.bomb.velocity.x = progress * 10;
       state.bomb.x += state.bomb.velocity.x;
-      state.bomb.y -= state.bomb.velocity.y; 
+      draw();
     }
-    draw();
-  }
+  });
+  animate({
+    duration: 2000,
+    timing: quad,
+    draw: function(progress) {
+      state.bomb.velocity.y = progress * 3;
+      state.bomb.y += state.bomb.velocity.y;
+      draw();
+    }
+  });
 }
 
-// function animate(timestamp) {
-//   // The animate function will manipulate the state in every animation cycle and call the draw function to update the screen.
-// }
+function quad(timeFraction) {
+  return 1-3*Math.pow(timeFraction, 2);
+}
+
+function animate({timing, draw, duration}) {
+
+  let start = performance.now();
+
+  requestAnimationFrame(function animate(time) {
+    // timeFraction goes from 0 to 1
+    let timeFraction = (time - start) / duration;
+    if (timeFraction > 1) timeFraction = 1;
+
+    // calculate the current animation state
+    let progress = timing(timeFraction);
+
+    draw(progress); // draw it
+
+    if (timeFraction < 1) {
+      requestAnimationFrame(animate);
+    }
+  });
+}
 
 function drawBuildings()
 {
