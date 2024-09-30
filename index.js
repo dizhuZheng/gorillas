@@ -6,9 +6,9 @@ const canvas = document.getElementById("game");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
-const v1 = document.querySelector("#info-left .velocity");
+//const v1 = document.querySelector("#info-left .velocity");
 // const v2 = document.querySelector("#info-right .velocity");
-const a1 = document.querySelector("#info-left .angle");
+//const a1 = document.querySelector("#info-left .angle");
 // const a2 = document.querySelector("#info-right .angle");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
@@ -34,18 +34,17 @@ function newGame() {
   calculateScale();
   initializeBombPosition();
   draw();
-  throwBomb();
 }
 
-// bombGrab.addEventListener("mousedown", (e) => {
-//   if (state.phase === "aiming")
-//   {
-//     flag = true;
-//     dragX = e.clientX;
-//     dragY = e.clientY;
-//     document.body.style.cursor = "grab";
-//   }
-// });
+bombGrab.addEventListener("mousedown", (e) => {
+  if (state.phase === "aiming")
+  {
+    flag = true;
+    dragX = e.clientX;
+    dragY = e.clientY;
+    document.body.style.cursor = "grab";
+  }
+});
 
 window.addEventListener("mousemove", (e) => {
   if (flag == true)
@@ -72,10 +71,10 @@ window.addEventListener("mousemove", (e) => {
 window.addEventListener("mouseup", (e) => {
   if (flag == true) {
     document.body.style.cursor = "default";
-    v1.innerHTML = 0;
+    //v1.innerHTML = 0;
     flag = false;
+    throwBomb();
   }
-  throwBomb();
 });
 
 function draw() {
@@ -90,7 +89,7 @@ function draw() {
   // drawBackBuildings();
   //drawBuildings();
  // drawWindows();
-  //drawGorilla(1);
+  drawGorilla(1);
   //drawGorilla(2);
   drawBomb(); 
   ctx.restore(); 
@@ -129,6 +128,10 @@ function throwBomb() {
 }
 
 function quad(timeFraction) {
+  if (state.bomb.velocity.y < 10)
+  {
+    return 0;
+  }
   return 1-3*Math.pow(timeFraction, 2);
 }
 
