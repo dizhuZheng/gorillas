@@ -111,8 +111,7 @@ function throwBomb() {
       return timeFraction;
     },
     draw: function(progress) {
-      state.bomb.velocity.x = progress * 10;
-      state.bomb.x += state.bomb.velocity.x;
+      state.bomb.x += state.bomb.velocity.x * progress / 10;
       draw();
     }
   });
@@ -120,19 +119,14 @@ function throwBomb() {
     duration: 2000,
     timing: quad,
     draw: function(progress) {
-      state.bomb.velocity.y = progress * 3;
-      state.bomb.y += state.bomb.velocity.y;
+      state.bomb.y += state.bomb.velocity.y * (-progress) / 20;
       draw();
     }
   });
 }
 
 function quad(timeFraction) {
-  if (state.bomb.velocity.y < 10)
-  {
-    return 0;
-  }
-  return 1-3*Math.pow(timeFraction, 2);
+  return 1-2*Math.pow(timeFraction, 2) - timeFraction;
 }
 
 function animate({timing, draw, duration}) {
