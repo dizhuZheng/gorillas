@@ -20,9 +20,11 @@ function newGame() {
     phase: "aiming",
     scale: 1,
     currentPlayer: 1,
+    hit: false,
     flag: false, // isDragging
     dragX: undefined,
     dragY: undefined,
+    offScreen: false,
     bomb: {
       x: undefined,
       y: undefined,
@@ -143,10 +145,38 @@ function animate({timing, draw, duration}) {
 
     draw(progress); // draw it
 
+    checkoffScreen();
+
     if (timeFraction < 1) {
       requestAnimationFrame(animate);
     }
+
+    if (state.offScreen === true)
+    {
+      alert("the bomb is off screen");
+      return;
+    }
   });
+}
+
+function hitBuildings()
+{
+  state.buildings.forEach((building) => {
+    if (state.bomb.x > building.x && state.bomb.x < building.x + building.width && state.bomb.y < building.height)
+    {
+      state.hit = true;
+    }
+  });
+}
+
+function checkoffScreen()
+{
+  let x = window.innerWidth / state.scale;
+  let y = window.innerHeight / state.scale;
+ if(state.bomb.x >= x || state.bomb.y >= y || state.bomb.x <=0 || state.bomb.y <=0)
+ {
+  state.offScreen = true;
+ }
 }
 
 function drawBuildings()
@@ -201,8 +231,8 @@ function generateBuildings() {
   const buildings = [];
   const minWidth = 80;
   const maxWidth = 150;
-  const minHeight = 40;
-  const maxHeight = 300;
+  const minHeight = 40; // 40
+  const maxHeight = 300; // 300
   const minHeightGorilla = 30;
   const maxHeightGorilla = 150;
 
@@ -332,7 +362,6 @@ function calculateScale()
 {
   const lastBuilding = state.buildings.at(-1);
   const totalWidthOfTheCity = lastBuilding.x + lastBuilding.width;
-
   state.scale = window.innerWidth / totalWidthOfTheCity;
 }
 
