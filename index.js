@@ -167,8 +167,9 @@ function hitBuildings()
 
 function checkoffScreen()
 {
- if(state.bomb.x >= window.innerWidth / state.scale || state.bomb.x <=0 || state.bomb.y <=0)
+ if(state.bomb.x > window.innerWidth/state.scale || state.bomb.x <=0 || state.bomb.y >= window.innerHeight/state.scale)
  {
+  alert("hit the frame");
   return true;
  }
 }
