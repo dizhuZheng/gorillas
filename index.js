@@ -24,7 +24,6 @@ function newGame() {
     flag: false, // isDragging
     dragX: undefined,
     dragY: undefined,
-    offScreen: false,
     bomb: {
       x: undefined,
       y: undefined,
@@ -137,7 +136,7 @@ function animate({timing, draw, duration}) {
 
   requestAnimationFrame(function animate(time) 
   {
-    if (state.offScreen === true)
+    if (checkoffScreen())
     {
       return;
     }
@@ -149,8 +148,6 @@ function animate({timing, draw, duration}) {
     let progress = timing(timeFraction);
 
     draw(progress); // draw it
-
-    checkoffScreen();
 
     if (timeFraction < 1) {
       requestAnimationFrame(animate);
@@ -170,11 +167,9 @@ function hitBuildings()
 
 function checkoffScreen()
 {
-  let x = window.innerWidth / state.scale;
-  let y = window.innerHeight / state.scale;
- if(state.bomb.x >= x || state.bomb.y >= y || state.bomb.x <=0 || state.bomb.y <=0)
+ if(state.bomb.x >= window.innerWidth / state.scale || state.bomb.x <=0 || state.bomb.y <=0)
  {
-  state.offScreen = true;
+  return true;
  }
 }
 
