@@ -6,10 +6,10 @@ const canvas = document.getElementById("game");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 const ctx = canvas.getContext("2d");
-//const v1 = document.querySelector("#info-left .velocity");
-// const v2 = document.querySelector("#info-right .velocity");
-//const a1 = document.querySelector("#info-left .angle");
-// const a2 = document.querySelector("#info-right .angle");
+const v1 = document.querySelector("#info-left .velocity");
+const v2 = document.querySelector("#info-right .velocity");
+const a1 = document.querySelector("#info-left .angle");
+const a2 = document.querySelector("#info-right .angle");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
 
@@ -56,17 +56,17 @@ window.addEventListener("mousemove", (e) => {
     state.bomb.velocity.x = -differenceX;
     state.bomb.velocity.y = -differenceY;
     draw();
-    // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
-    // let k = differenceY / differenceX;
-    // if(currentPlayer == 1)
-    // {
-    //   v1.innerHTML = Math.floor(difference);
-    //   a1.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
-    // }
-    // else{
-    //   v2.innerHTML = Math.floor(difference);
-    //   a2.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
-    // }
+    let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
+    let k = differenceY / differenceX;
+    if(currentPlayer == 1)
+    {
+      v1.innerHTML = Math.floor(difference);
+      a1.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    }
+    else{
+      v2.innerHTML = Math.floor(difference);
+      a2.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    }
   }
 });
 
@@ -89,7 +89,7 @@ function draw() {
   drawBackground(); 
   //drawMoon();
   // drawBackBuildings();
-  //drawBuildings();
+  drawBuildings();
  // drawWindows();
   drawGorilla(1);
   //drawGorilla(2);
