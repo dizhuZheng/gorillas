@@ -20,10 +20,11 @@ function newGame() {
     phase: "aiming",
     scale: 1,
     currentPlayer: 1,
-    hit: false,
     flag: false, // isDragging
     dragX: undefined,
     dragY: undefined,
+    hit: false,
+    offScreen: false,
     bomb: {
       x: undefined,
       y: undefined,
@@ -55,17 +56,17 @@ window.addEventListener("mousemove", (e) => {
     state.bomb.velocity.x = -differenceX;
     state.bomb.velocity.y = -differenceY;
     draw();
-    let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
-    let k = differenceY / differenceX;
-    if(currentPlayer == 1)
-    {
-      v1.innerHTML = Math.floor(difference);
-      a1.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
-    }
-    else{
-      v2.innerHTML = Math.floor(difference);
-      a2.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
-    }
+    // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
+    // let k = differenceY / differenceX;
+    // if(currentPlayer == 1)
+    // {
+    //   v1.innerHTML = Math.floor(difference);
+    //   a1.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    // }
+    // else{
+    //   v2.innerHTML = Math.floor(difference);
+    //   a2.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    // }
   }
 });
 
@@ -107,7 +108,7 @@ window.addEventListener("resize", () => {
 function throwBomb() {
   state.phase = "flying";
   animate({
-    duration: 2000,
+    duration: 3000,
     timing: function (timeFraction) {
       return timeFraction;
     },
@@ -117,7 +118,7 @@ function throwBomb() {
     }
   });
   animate({
-    duration: 2000,
+    duration: 3000,
     timing: quad,
     draw: function(progress) {
       state.bomb.y += state.bomb.velocity.y * (-progress) / 20;
@@ -127,38 +128,41 @@ function throwBomb() {
 }
 
 function quad(timeFraction) {
-  return 1-2*Math.pow(timeFraction, 2) - timeFraction;
+  return 1-Math.pow(timeFraction, 2) - 2 * timeFraction;
 }
 
 function animate({timing, draw, duration}) {
-
   let start = performance.now();
+  let reqAnim;
 
   requestAnimationFrame(function animate(time) 
   {
-    if (checkoffScreen())
-    {
-      return;
-    }
     // timeFraction goes from 0 to 1
     let timeFraction = (time - start) / duration;
     if (timeFraction > 1) timeFraction = 1;
 
     // calculate the current animation state
     let progress = timing(timeFraction);
+    state.bomb.y -= 1;
 
-    draw(progress); // draw it
+    draw(progress); 
 
     if (timeFraction < 1) {
-      requestAnimationFrame(animate);
+      reqAnim = window.requestAnimationFrame(animate);
     }
+    // hitBuildings();
+    // checkoffScreen();
+    // if(state.hit === true || state.offScreen === true)
+    // {
+    //   window.cancelAnimationFrame(reqAnim);
+    // }
   });
 }
 
 function hitBuildings()
 {
   state.buildings.forEach((building) => {
-    if (state.bomb.x > building.x && state.bomb.x < building.x + building.width && state.bomb.y < building.height)
+    if (state.bomb.x >= building.x && state.bomb.x <= building.x + building.width && state.bomb.y <= building.height)
     {
       state.hit = true;
     }
@@ -169,8 +173,7 @@ function checkoffScreen()
 {
  if(state.bomb.x > window.innerWidth/state.scale || state.bomb.x <=0 || state.bomb.y >= window.innerHeight/state.scale)
  {
-  alert("hit the frame");
-  return true;
+  state.offScreen = true;
  }
 }
 
