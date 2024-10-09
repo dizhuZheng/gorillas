@@ -38,6 +38,24 @@ function newGame() {
   draw();
 }
 
+function draw() {
+  ctx.save(); 
+  // Flip coordinate system upside down 
+  ctx.translate(0, window.innerHeight); 
+  ctx.scale(1, -1); 
+  ctx.scale(state.scale, state.scale);
+  // // Draw scene 
+  drawBackground(); 
+  //drawMoon();
+  // drawBackBuildings();
+  drawBuildings();
+ // drawWindows();
+  drawGorilla(1);
+  //drawGorilla(2);
+  drawBomb(); 
+  ctx.restore(); 
+}
+
 bombGrab.addEventListener("mousedown", (e) => {
   if (state.phase === "aiming")
   {
@@ -78,24 +96,6 @@ window.addEventListener("mouseup", (e) => {
     throwBomb();
   }
 });
-
-function draw() {
-  ctx.save(); 
-  // Flip coordinate system upside down 
-  ctx.translate(0, window.innerHeight); 
-  ctx.scale(1, -1); 
-  ctx.scale(state.scale, state.scale);
-  // // Draw scene 
-  drawBackground(); 
-  //drawMoon();
-  // drawBackBuildings();
-  //drawBuildings();
- // drawWindows();
-  drawGorilla(1);
-  //drawGorilla(2);
-  drawBomb(); 
-  ctx.restore(); 
-}
 
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
@@ -150,19 +150,23 @@ function animate({timing, draw, duration}) {
     if (timeFraction < 1) {
       reqAnim = window.requestAnimationFrame(animate);
     }
-    // hitBuildings();
-    // checkoffScreen();
-    // if(state.hit === true || state.offScreen === true)
-    // {
-    //   window.cancelAnimationFrame(reqAnim);
-    // }
+    hitBuildings();
+    checkoffScreen();
+    if(state.hit === true || state.offScreen === true)
+    {
+      window.cancelAnimationFrame(reqAnim);
+    }
   });
 }
 
 function hitBuildings()
 {
   state.buildings.forEach((building) => {
-    if (state.bomb.x >= building.x && state.bomb.x <= building.x + building.width && state.bomb.y <= building.height)
+  if (
+      state.bomb.x + 4 > building.x &&
+      state.bomb.x - 4 < building.x + building.width &&
+      state.bomb.y - 4 < 0 + building.height
+    )
     {
       state.hit = true;
     }
@@ -182,7 +186,7 @@ function drawBuildings()
  state.buildings.forEach((building) => {
   ctx.fillStyle = "#152A47";
   ctx.fillRect(building.x, 0, building.width, building.height);
-  drawWindows(building.x, building.height, building.width, building.height);
+  // drawWindows(building.x, building.height, building.width, building.height);
  });
 }
 
