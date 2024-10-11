@@ -169,7 +169,17 @@ function hitBuildings()
     )
     {
       state.hit = true;
-      center.innerHTML =  "Hit the building!";
+      state.currentPlayer = 1? 2: 1;
+      state.phase = "aiming";
+      ctx.save(); 
+  // Flip coordinate system upside down 
+      ctx.translate(0, window.innerHeight); 
+      ctx.scale(1, -1); 
+      ctx.scale(state.scale, state.scale);
+      drawGorilla(state.currentPlayer);
+      initializeBombPosition();
+      drawBomb();
+      ctx.restore();
     }
   });
 }
@@ -182,7 +192,7 @@ function hitGorilla()
   if(state.bomb.x >= gorillaX && state.bomb.x <= gorillaX + 10 && state.bomb.y >= gorillaY && state.bomb.y <= gorillaY + 150)
   {
     state.hitGorilla = true;
-    center.innerHTML =  "I won!";
+    center.innerHTML =  "Player" + currentPlayer + "won!";
     state.phase = "celebrating";
     drawGorillaLeftArm(currentPlayer);
     drawGorillaRightArm(currentPlayer);
@@ -195,6 +205,17 @@ function checkoffScreen()
  {
   state.offScreen = true;
   center.innerHTML =  "Hit the wall!";
+  state.currentPlayer = 1? 2: 1;
+  state.phase = "aiming";
+  ctx.save(); 
+  // Flip coordinate system upside down 
+  ctx.translate(0, window.innerHeight); 
+  ctx.scale(1, -1); 
+  ctx.scale(state.scale, state.scale);
+  drawGorilla(state.currentPlayer);
+  initializeBombPosition();
+  drawBomb();
+  ctx.restore();
  }
 }
 
