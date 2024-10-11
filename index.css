@@ -15,9 +15,10 @@ body
   left: 25px;
 }
 
-#info-center h2{
+#info-center > h2{
   position: absolute;
-  top: 120px;
+  top: 200px;
+  color:blueviolet;
   font-size: 34px;
   left: 50%;
 }
@@ -28,6 +29,7 @@ body
   right: 25px;
   text-align: right;
 }
+
 #bomb-grab-area {
   position: absolute;
   width: 30px;

@@ -48,9 +48,7 @@ function draw() {
   ctx.scale(state.scale, state.scale);
   // // Draw scene 
   drawBackground(); 
-  //drawMoon();
-  //drawBackBuildings();
-  //drawBuildings();
+  drawBuildings();
   drawGorilla(1);
   drawGorilla(2);
   drawBomb(); 
@@ -118,14 +116,14 @@ function throwBomb() {
       draw();
     }
   });
-  // animate({
-  //   duration: 3000,
-  //   timing: quad,
-  //   draw: function(progress) {
-  //     state.bomb.y += state.bomb.velocity.y * (-progress) / 20;
-  //     draw();
-  //   }
-  // });
+  animate({
+    duration: 3000,
+    timing: quad,
+    draw: function(progress) {
+      state.bomb.y += state.bomb.velocity.y * (-progress) / 20;
+      draw();
+    }
+  });
 }
 
 function quad(timeFraction) {
@@ -140,7 +138,7 @@ function animate({timing, draw, duration}) {
   {
     // timeFraction goes from 0 to 1
     let timeFraction = (time - start) / duration;
-    if (timeFraction > 1) timeFraction = 1;
+    if (timeFraction > 2) timeFraction = 2;
 
     // calculate the current animation state
     let progress = timing(timeFraction);
@@ -148,10 +146,10 @@ function animate({timing, draw, duration}) {
 
     draw(progress); 
 
-    if (timeFraction < 1) {
+    if (timeFraction < 2) {
       reqAnim = window.requestAnimationFrame(animate);
     }
-    //hitBuildings();
+    hitBuildings();
     hitGorilla();
     checkoffScreen();
     if(state.hit === true || state.offScreen === true || state.hitGorilla === true)
@@ -171,6 +169,7 @@ function hitBuildings()
     )
     {
       state.hit = true;
+      center.innerHTML =  "Hit the building!";
     }
   });
 }
@@ -183,10 +182,10 @@ function hitGorilla()
   if(state.bomb.x >= gorillaX && state.bomb.x <= gorillaX + 10 && state.bomb.y >= gorillaY && state.bomb.y <= gorillaY + 150)
   {
     state.hitGorilla = true;
+    center.innerHTML =  "I won!";
     state.phase = "celebrating";
     drawGorillaLeftArm(currentPlayer);
     drawGorillaRightArm(currentPlayer);
-    center.innerHTML =  "I Won Won Won!";
   }
 }
 
@@ -195,6 +194,7 @@ function checkoffScreen()
  if(state.bomb.x > window.innerWidth/state.scale || state.bomb.x <=0 || state.bomb.y >= window.innerHeight/state.scale)
  {
   state.offScreen = true;
+  center.innerHTML =  "Hit the wall!";
  }
 }
 
@@ -204,35 +204,6 @@ function drawBuildings()
   ctx.fillStyle = "#152A47";
   ctx.fillRect(building.x, 0, building.width, building.height);
  });
-}
-
-function drawBackBuildings()
-{
-  ctx.save();
-  ctx.globalAlpha = 0.5;
-  ctx.fillStyle = "#152A47";
-  state.bb.forEach((building) => {
-    ctx.fillRect(building.x, 0, building.width, building.height);
-  });
-  ctx.beginPath();
-  ctx.moveTo(state.bb[0].x,state.bb[0].height);
-  ctx.lineTo(state.bb[0].x+60,state.bb[0].height+60);
-  ctx.lineTo(state.bb[0].x+state.bb[0].width,state.bb[0].height);
-  ctx.lineTo(state.bb[0].x,state.bb[0].height);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(state.bb[3].x,state.bb[3].height);
-  ctx.lineTo(state.bb[3].x+50,state.bb[3].height+50);
-  ctx.lineTo(state.bb[3].x+state.bb[3].width,state.bb[3].height);
-  ctx.lineTo(state.bb[3].x,state.bb[3].height);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(state.bb[5].x,state.bb[5].height);
-  ctx.lineTo(state.bb[5].x+70,state.bb[5].height+70);
-  ctx.lineTo(state.bb[5].x+state.bb[5].width,state.bb[5].height);
-  ctx.lineTo(state.bb[5].x,state.bb[5].height);
-  ctx.fill();
-  ctx.restore();
 }
 
 function generateBuildings() {
@@ -287,6 +258,7 @@ function drawBackground()
 {
   ctx.fillStyle = "#58A8D8";
   ctx.fillRect(0, 0, window.innerWidth / state.scale,window.innerHeight / state.scale);
+  drawMoon();
 }
 
 function drawGorilla(player)
@@ -323,7 +295,8 @@ function drawBomb()
 
 function drawMoon()
 {
-  ctx.arc((3/4)*window.innerWidth/state.scale, (3/4)*window.innerHeight/state.scale, (1/20)*window.innerWidth/state.scale, 0, 2 * Math.PI);
+  ctx.beginPath();
+  ctx.arc((0.75)*window.innerWidth/state.scale, (0.75)*window.innerHeight/state.scale, (1/50)*window.innerWidth/state.scale, 0, 2 * Math.PI);
   ctx.fillStyle="yellow";
   ctx.fill();
 }
