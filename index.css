@@ -8,11 +8,20 @@ body
   user-select: none;
   -webkit-user-select: none;
 }
+
 #info-left {
   position: absolute;
   top: 20px;
   left: 25px;
 }
+
+#info-center h2{
+  position: absolute;
+  top: 120px;
+  font-size: 34px;
+  left: 50%;
+}
+
 #info-right {
   position: absolute;
   top: 20px;

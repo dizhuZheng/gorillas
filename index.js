@@ -10,6 +10,7 @@ const v1 = document.querySelector("#info-left .velocity");
 const v2 = document.querySelector("#info-right .velocity");
 const a1 = document.querySelector("#info-left .angle");
 const a2 = document.querySelector("#info-right .angle");
+const center = document.querySelector("#info-center h2");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
 
@@ -25,6 +26,7 @@ function newGame() {
     dragY: undefined,
     hit: false,
     offScreen: false,
+    hitGorilla: false,
     bomb: {
       x: undefined,
       y: undefined,
@@ -47,11 +49,10 @@ function draw() {
   // // Draw scene 
   drawBackground(); 
   //drawMoon();
-  // drawBackBuildings();
-  drawBuildings();
- // drawWindows();
+  //drawBackBuildings();
+  //drawBuildings();
   drawGorilla(1);
-  //drawGorilla(2);
+  drawGorilla(2);
   drawBomb(); 
   ctx.restore(); 
 }
@@ -117,18 +118,18 @@ function throwBomb() {
       draw();
     }
   });
-  animate({
-    duration: 3000,
-    timing: quad,
-    draw: function(progress) {
-      state.bomb.y += state.bomb.velocity.y * (-progress) / 20;
-      draw();
-    }
-  });
+  // animate({
+  //   duration: 3000,
+  //   timing: quad,
+  //   draw: function(progress) {
+  //     state.bomb.y += state.bomb.velocity.y * (-progress) / 20;
+  //     draw();
+  //   }
+  // });
 }
 
 function quad(timeFraction) {
-  return 1-Math.pow(timeFraction, 2) - 2 * timeFraction;
+  return 1-Math.pow(timeFraction, 2);
 }
 
 function animate({timing, draw, duration}) {
@@ -143,16 +144,17 @@ function animate({timing, draw, duration}) {
 
     // calculate the current animation state
     let progress = timing(timeFraction);
-    state.bomb.y -= 1;
+    state.bomb.y -= 0.5;
 
     draw(progress); 
 
     if (timeFraction < 1) {
       reqAnim = window.requestAnimationFrame(animate);
     }
-    hitBuildings();
+    //hitBuildings();
+    hitGorilla();
     checkoffScreen();
-    if(state.hit === true || state.offScreen === true)
+    if(state.hit === true || state.offScreen === true || state.hitGorilla === true)
     {
       window.cancelAnimationFrame(reqAnim);
     }
@@ -173,6 +175,21 @@ function hitBuildings()
   });
 }
 
+function hitGorilla()
+{
+  let enemyBuilding = state.currentPlayer === 1? state.buildings.at(-2):state.buildings.at(1); 
+  let gorillaX = enemyBuilding.x + enemyBuilding.width / 2;
+  let gorillaY = enemyBuilding.height;
+  if(state.bomb.x >= gorillaX && state.bomb.x <= gorillaX + 10 && state.bomb.y >= gorillaY && state.bomb.y <= gorillaY + 150)
+  {
+    state.hitGorilla = true;
+    state.phase = "celebrating";
+    drawGorillaLeftArm(currentPlayer);
+    drawGorillaRightArm(currentPlayer);
+    center.innerHTML =  "I Won Won Won!";
+  }
+}
+
 function checkoffScreen()
 {
  if(state.bomb.x > window.innerWidth/state.scale || state.bomb.x <=0 || state.bomb.y >= window.innerHeight/state.scale)
@@ -186,18 +203,7 @@ function drawBuildings()
  state.buildings.forEach((building) => {
   ctx.fillStyle = "#152A47";
   ctx.fillRect(building.x, 0, building.width, building.height);
-  // drawWindows(building.x, building.height, building.width, building.height);
  });
-}
-
-function drawWindows(a, b, c, d)
-{
-  const e = a  * 1.1;
-  const f = b * 0.7;
-  const h = c * 0.09;
-  const i = d * 0.09;
-  ctx.fillStyle = "#e6b800";
-  ctx.fillRect(e, f, h, i);
 }
 
 function drawBackBuildings()
@@ -233,8 +239,8 @@ function generateBuildings() {
   const buildings = [];
   const minWidth = 80;
   const maxWidth = 150;
-  const minHeight = 40; // 40
-  const maxHeight = 300; // 300
+  const minHeight = 40; 
+  const maxHeight = 300; 
   const minHeightGorilla = 30;
   const maxHeightGorilla = 150;
 
@@ -382,7 +388,6 @@ function drawGorillaFace()
   ctx.moveTo(2, 70);
   ctx.lineTo(5, 70);
 
-  // Mouth
   ctx.moveTo(-5, 62);
   ctx.lineTo(5, 62);
   ctx.stroke();
@@ -392,10 +397,8 @@ function drawGorillaLeftArm(player)
 {
   ctx.strokeStyle = "black";
   ctx.lineWidth = 18;
-
   ctx.beginPath();
   ctx.moveTo(-13, 50);
-
   if (
     (state.phase === "aiming" && state.currentPlayer === 1 && player === 1) ||
     (state.phase === "celebrating" && state.currentPlayer === player)
@@ -404,7 +407,6 @@ function drawGorillaLeftArm(player)
   } else {
     ctx.quadraticCurveTo(-44, 45, -28, 12);
   }
-
   ctx.stroke();
 }
 
