@@ -107,7 +107,7 @@ window.addEventListener("resize", () => {
 function throwBomb() {
   state.phase = "flying";
   animate({
-    duration: 3000,
+    duration: 2000,
     timing: function (timeFraction) {
       return timeFraction;
     },
@@ -117,7 +117,7 @@ function throwBomb() {
     }
   });
   animate({
-    duration: 3000,
+    duration: 2000,
     timing: quad,
     draw: function(progress) {
       state.bomb.y += state.bomb.velocity.y * (-progress) / 20;
@@ -138,15 +138,15 @@ function animate({timing, draw, duration}) {
   {
     // timeFraction goes from 0 to 1
     let timeFraction = (time - start) / duration;
-    if (timeFraction > 2) timeFraction = 2;
+    if (timeFraction > 1) timeFraction = 1;
 
     // calculate the current animation state
     let progress = timing(timeFraction);
-    state.bomb.y -= 0.5;
+    // state.bomb.y -= 0.5;
 
     draw(progress); 
 
-    if (timeFraction < 2) {
+    if (timeFraction < 1) {
       reqAnim = window.requestAnimationFrame(animate);
     }
     hitBuildings();
@@ -155,6 +155,9 @@ function animate({timing, draw, duration}) {
     if(state.hit === true || state.offScreen === true || state.hitGorilla === true)
     {
       window.cancelAnimationFrame(reqAnim);
+      state.offScreen = false;
+      state.hit = false;
+      state.hitGorilla = false;
     }
   });
 }
@@ -169,8 +172,9 @@ function hitBuildings()
     )
     {
       state.hit = true;
-      state.currentPlayer = 1? 2: 1;
+      state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
       state.phase = "aiming";
+      calculateScale();
       ctx.save(); 
   // Flip coordinate system upside down 
       ctx.translate(0, window.innerHeight); 
@@ -205,8 +209,10 @@ function checkoffScreen()
  {
   state.offScreen = true;
   center.innerHTML =  "Hit the wall!";
-  state.currentPlayer = 1? 2: 1;
+  state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
   state.phase = "aiming";
+  calculateScale();
+  alert(state.currentPlayer);
   ctx.save(); 
   // Flip coordinate system upside down 
   ctx.translate(0, window.innerHeight); 
