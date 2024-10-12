@@ -106,60 +106,35 @@ window.addEventListener("resize", () => {
 
 function throwBomb() {
   state.phase = "flying";
-  animate({
-    duration: 2000,
-    timing: function (timeFraction) {
-      return timeFraction;
-    },
-    draw: function(progress) {
-      state.bomb.x += state.bomb.velocity.x * progress / 10;
-      draw();
+  let start = Date.now(); // remember start time
+  let timer = setInterval(function() {
+    // how much time passed from the start?
+    let timePassed = Date.now() - start;
+    hitBuildings();
+    hitGorilla();
+    checkoffScreen();
+    art(timePassed);
+    if(state.hit === true || state.offScreen === true || state.hitGorilla === true) { 
+      state.offScreen = false;
+      state.hit = false;
+      state.hitGorilla = false;
+      clearInterval(timer);
+      return;
     }
-  });
-  animate({
-    duration: 2000,
-    timing: quad,
-    draw: function(progress) {
-      state.bomb.y += state.bomb.velocity.y * (-progress) / 20;
-      draw();
-    }
-  });
+    // draw the animation at the moment timePassed
+  }, 20);
 }
 
 function quad(timeFraction) {
   return 1-Math.pow(timeFraction, 2);
 }
 
-function animate({timing, draw, duration}) {
-  let start = performance.now();
-  let reqAnim;
-
-  requestAnimationFrame(function animate(time) 
-  {
-    // timeFraction goes from 0 to 1
-    let timeFraction = (time - start) / duration;
-    if (timeFraction > 1) timeFraction = 1;
-
-    // calculate the current animation state
-    let progress = timing(timeFraction);
-    // state.bomb.y -= 0.5;
-
-    draw(progress); 
-
-    if (timeFraction < 1) {
-      reqAnim = window.requestAnimationFrame(animate);
-    }
-    hitBuildings();
-    hitGorilla();
-    checkoffScreen();
-    if(state.hit === true || state.offScreen === true || state.hitGorilla === true)
-    {
-      window.cancelAnimationFrame(reqAnim);
-      state.offScreen = false;
-      state.hit = false;
-      state.hitGorilla = false;
-    }
-  });
+function art(timePassed)
+{
+  state.bomb.x += state.bomb.velocity.x * timePassed / 10000;
+  let luck = quad(timePassed/1000);
+  state.bomb.y += luck;
+  draw();
 }
 
 function hitBuildings()
@@ -174,16 +149,22 @@ function hitBuildings()
       state.hit = true;
       state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
       state.phase = "aiming";
-      calculateScale();
-      ctx.save(); 
-  // Flip coordinate system upside down 
-      ctx.translate(0, window.innerHeight); 
-      ctx.scale(1, -1); 
-      ctx.scale(state.scale, state.scale);
-      drawGorilla(state.currentPlayer);
-      initializeBombPosition();
-      drawBomb();
-      ctx.restore();
+      const enemyPlayer = state.currentPlayer === 1 ? 2 : 1;
+      const enemyBuilding =
+        enemyPlayer === 1
+          ? state.buildings.at(1) // Second building
+          : state.buildings.at(-2); // Second last building
+      ctx.save();
+      ctx.translate(
+        enemyBuilding.x + enemyBuilding.width / 2,
+        enemyBuilding.height
+      );
+      drawGorillaBody();
+      drawGorillaLeftArm(enemyPlayer);
+      drawGorillaRightArm(enemyPlayer);
+          initializeBombPosition();
+          drawBomb();
+          ctx.restore();
     }
   });
 }
@@ -193,7 +174,7 @@ function hitGorilla()
   let enemyBuilding = state.currentPlayer === 1? state.buildings.at(-2):state.buildings.at(1); 
   let gorillaX = enemyBuilding.x + enemyBuilding.width / 2;
   let gorillaY = enemyBuilding.height;
-  if(state.bomb.x >= gorillaX && state.bomb.x <= gorillaX + 10 && state.bomb.y >= gorillaY && state.bomb.y <= gorillaY + 150)
+  if(state.bomb.x >= gorillaX && state.bomb.x <= gorillaX + 10 && state.bomb.y >= gorillaY && state.bomb.y <= gorillaY + 50)
   {
     state.hitGorilla = true;
     center.innerHTML =  "Player" + currentPlayer + "won!";
@@ -211,14 +192,19 @@ function checkoffScreen()
   center.innerHTML =  "Hit the wall!";
   state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
   state.phase = "aiming";
-  calculateScale();
-  alert(state.currentPlayer);
-  ctx.save(); 
-  // Flip coordinate system upside down 
-  ctx.translate(0, window.innerHeight); 
-  ctx.scale(1, -1); 
-  ctx.scale(state.scale, state.scale);
-  drawGorilla(state.currentPlayer);
+  const enemyPlayer = state.currentPlayer === 1 ? 2 : 1;
+  const enemyBuilding =
+    enemyPlayer === 1
+      ? state.buildings.at(1) // Second building
+      : state.buildings.at(-2); // Second last building
+  ctx.save();
+  ctx.translate(
+    enemyBuilding.x + enemyBuilding.width / 2,
+    enemyBuilding.height
+  );
+  drawGorillaBody();
+  drawGorillaLeftArm(enemyPlayer);
+  drawGorillaRightArm(enemyPlayer);
   initializeBombPosition();
   drawBomb();
   ctx.restore();
