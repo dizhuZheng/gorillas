@@ -10,7 +10,7 @@ const v1 = document.querySelector("#info-left .velocity");
 const v2 = document.querySelector("#info-right .velocity");
 const a1 = document.querySelector("#info-left .angle");
 const a2 = document.querySelector("#info-right .angle");
-const center = document.querySelector("#info-center h2");
+const center = document.querySelector("#info-center");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
 
@@ -56,6 +56,7 @@ function draw() {
 }
 
 bombGrab.addEventListener("mousedown", (e) => {
+  center.style.visibility = "hidden";
   if (state.phase === "aiming")
   {
     flag = true;
@@ -132,6 +133,7 @@ function quad(timeFraction) {
 function art(timePassed)
 {
   state.bomb.x += state.bomb.velocity.x * timePassed / 10000;
+  state.bomb.y += 1;
   let luck = quad(timePassed/1000);
   state.bomb.y += luck;
   draw();
@@ -147,6 +149,7 @@ function hitBuildings()
     )
     {
       state.hit = true;
+      updateInfo("Hit the Building");
       state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
       state.phase = "aiming";
       const enemyPlayer = state.currentPlayer === 1 ? 2 : 1;
@@ -189,7 +192,7 @@ function checkoffScreen()
  if(state.bomb.x > window.innerWidth/state.scale || state.bomb.x <=0 || state.bomb.y >= window.innerHeight/state.scale)
  {
   state.offScreen = true;
-  center.innerHTML =  "Hit the wall!";
+  updateInfo("Hit the Wall");
   state.currentPlayer = state.currentPlayer === 1 ? 2 : 1;
   state.phase = "aiming";
   const enemyPlayer = state.currentPlayer === 1 ? 2 : 1;
@@ -343,7 +346,7 @@ function initializeBombPosition()
   const gorillaX = building.x + building.width / 2;
   const gorillaY = building.height;
   const gorillaHandOffsetX = state.currentPlayer === 1 ? -28 : 28;
-  const gorillaHandOffsetY = 107;
+  const gorillaHandOffsetY = 108;
   state.bomb.x = gorillaX + gorillaHandOffsetX;
   state.bomb.y = gorillaY + gorillaHandOffsetY;
   bombGrab.style.left = state.bomb.x * state.scale - grabAreaRadius + "px";
@@ -414,7 +417,8 @@ function drawGorillaRightArm(player)
   ctx.stroke();
 }
 
-// function updateInfo(currentPlayer)
-// {
-
-// }
+function updateInfo(str)
+{
+  center.style.visibility = "visible";
+  center.innerHTML = str;
+}
