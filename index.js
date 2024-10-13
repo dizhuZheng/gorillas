@@ -73,25 +73,33 @@ window.addEventListener("mousemove", (e) => {
     let differenceY = e.clientY - dragY;
     state.bomb.velocity.x = -differenceX;
     state.bomb.velocity.y = -differenceY;
-    draw();
     // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
     // let k = differenceY / differenceX;
-    // if(currentPlayer == 1)
+    // if(state.currentPlayer == 1)
     // {
     //   v1.innerHTML = Math.floor(difference);
-    //   a1.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    //   a1.innerHTML = -Math.round(Math.atan(k)/ Math.PI * 180);
     // }
     // else{
     //   v2.innerHTML = Math.floor(difference);
-    //   a2.innerHTML = Math.round(Math.atan(k)/ Math.PI * 180);
+    //   a2.innerHTML = -Math.round(Math.atan(k)/ Math.PI * 180);
     // }
+    draw();
   }
 });
 
 window.addEventListener("mouseup", (e) => {
   if (flag == true) {
     document.body.style.cursor = "default";
-    //v1.innerHTML = 0;
+    // if ( state.currentPlayer == 1)
+    // {
+    //   v1.innerHTML = 0;
+    //   a1.innerHTML = 0;
+    // }
+    // else{
+    //   v2.innerHTML = 0;
+    //   a2.innerHTML = 0;
+    // }
     flag = false;
     throwBomb();
   }
@@ -127,14 +135,14 @@ function throwBomb() {
 }
 
 function quad(timeFraction) {
+  if (timeFraction > 1) timeFraction = 1;
   return 1-Math.pow(timeFraction, 2);
 }
 
 function art(timePassed)
 {
   state.bomb.x += state.bomb.velocity.x * timePassed / 10000;
-  state.bomb.y += 1;
-  let luck = quad(timePassed/1000);
+  luck = quad(timePassed/1000);
   state.bomb.y += luck;
   draw();
 }
