@@ -13,6 +13,7 @@ const a2 = document.querySelector("#info-right .angle");
 const center = document.querySelector("#info-center");
 const bombGrab = document.querySelector("#bomb-grab-area");
 const grabAreaRadius = 15;
+const celebrate = document.querySelector("#celebrate");
 
 newGame();
 
@@ -48,7 +49,7 @@ function draw() {
   ctx.scale(state.scale, state.scale);
   // // Draw scene 
   drawBackground(); 
-  //drawBuildings();
+  drawBuildings();
   drawGorilla(1);
   drawGorilla(2);
   drawBomb(); 
@@ -115,10 +116,10 @@ window.addEventListener("resize", () => {
 
 function throwBomb() {
   state.phase = "flying";
-  let start = Date.now(); 
+  let start2 = Date.now(); 
   let timer = setInterval(function() {
-    let timePassed = Date.now() - start;
-    //hitBuildings();
+    let timePassed = Date.now() - start2;
+    hitBuildings();
     hitGorilla();
     checkoffScreen();
     art(timePassed);
@@ -133,13 +134,13 @@ function throwBomb() {
 }
 
 function quad(timeFraction) {
-  return 1- Math.pow(timeFraction, 2);
+  return 1- 2 * Math.pow(timeFraction, 3);
 }
 
 function art(timePassed)
 {
-  state.bomb.x += state.bomb.velocity.x * timePassed/10000;
-  state.bomb.y += quad(timePassed/1600);
+  state.bomb.x += state.bomb.velocity.x / 50 * timePassed / 100;
+  state.bomb.y += quad(timePassed / 1000) - state.bomb.velocity.y / 50;
   draw();
 }
 
@@ -194,7 +195,7 @@ function hitGorilla()
   state.hitGorilla ||= ctx.isPointInStroke(state.bomb.x, state.bomb.y);
   drawGorillaRightArm(enemyPlayer);
   state.hitGorilla ||= ctx.isPointInStroke(state.bomb.x, state.bomb.y);
-  if(state.hitGorilla === true) updateInfo("Hit the Gorilla");
+  if(state.hitGorilla === true) celebrate.style.visibility = "visible";
   ctx.restore();
 }
 
@@ -357,7 +358,7 @@ function initializeBombPosition()
   const gorillaX = building.x + building.width / 2;
   const gorillaY = building.height;
   const gorillaHandOffsetX = state.currentPlayer === 1 ? -28 : 28;
-  const gorillaHandOffsetY = 108;
+  const gorillaHandOffsetY = 113;
   state.bomb.x = gorillaX + gorillaHandOffsetX;
   state.bomb.y = gorillaY + gorillaHandOffsetY;
   bombGrab.style.left = state.bomb.x * state.scale - grabAreaRadius + "px";
