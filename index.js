@@ -48,7 +48,7 @@ function draw() {
   ctx.scale(state.scale, state.scale);
   // // Draw scene 
   drawBackground(); 
-  drawBuildings();
+  //drawBuildings();
   drawGorilla(1);
   drawGorilla(2);
   drawBomb(); 
@@ -115,11 +115,10 @@ window.addEventListener("resize", () => {
 
 function throwBomb() {
   state.phase = "flying";
-  let start = Date.now(); // remember start time
+  let start = Date.now(); 
   let timer = setInterval(function() {
-    // how much time passed from the start?
     let timePassed = Date.now() - start;
-    hitBuildings();
+    //hitBuildings();
     hitGorilla();
     checkoffScreen();
     art(timePassed);
@@ -130,20 +129,17 @@ function throwBomb() {
       clearInterval(timer);
       return;
     }
-    // draw the animation at the moment timePassed
   }, 20);
 }
 
 function quad(timeFraction) {
-  if (timeFraction > 1) timeFraction = 1;
-  return 1-Math.pow(timeFraction, 2);
+  return 1- Math.pow(timeFraction, 2);
 }
 
 function art(timePassed)
 {
-  state.bomb.x += state.bomb.velocity.x * timePassed / 10000;
-  luck = quad(timePassed/1000);
-  state.bomb.y += luck;
+  state.bomb.x += state.bomb.velocity.x * timePassed/10000;
+  state.bomb.y += quad(timePassed/1600);
   draw();
 }
 
@@ -182,17 +178,24 @@ function hitBuildings()
 
 function hitGorilla()
 {
-  let enemyBuilding = state.currentPlayer === 1? state.buildings.at(-2):state.buildings.at(1); 
-  let gorillaX = enemyBuilding.x + enemyBuilding.width / 2;
-  let gorillaY = enemyBuilding.height;
-  if(state.bomb.x >= gorillaX && state.bomb.x <= gorillaX + 10 && state.bomb.y >= gorillaY && state.bomb.y <= gorillaY + 50)
-  {
-    state.hitGorilla = true;
-    center.innerHTML =  "Player" + currentPlayer + "won!";
-    state.phase = "celebrating";
-    drawGorillaLeftArm(currentPlayer);
-    drawGorillaRightArm(currentPlayer);
-  }
+  const enemyPlayer = state.currentPlayer === 1 ? 2 : 1;
+  const enemyBuilding =
+    enemyPlayer === 1
+      ? state.buildings.at(1) // Second building
+      : state.buildings.at(-2); // Second last building
+  ctx.save();
+  ctx.translate(
+    enemyBuilding.x + enemyBuilding.width / 2,
+    enemyBuilding.height
+  );
+  drawGorillaBody();
+  state.hitGorilla = ctx.isPointInPath(state.bomb.x, state.bomb.y);
+  drawGorillaLeftArm(enemyPlayer);
+  state.hitGorilla ||= ctx.isPointInStroke(state.bomb.x, state.bomb.y);
+  drawGorillaRightArm(enemyPlayer);
+  state.hitGorilla ||= ctx.isPointInStroke(state.bomb.x, state.bomb.y);
+  if(state.hitGorilla === true) updateInfo("Hit the Gorilla");
+  ctx.restore();
 }
 
 function checkoffScreen()
