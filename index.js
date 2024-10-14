@@ -34,7 +34,6 @@ function newGame() {
       velocity: {x:0, y:0}
     },
     buildings: generateBuildings(),
-    //bb: generateBackBuildings(),
   };
   calculateScale();
   initializeBombPosition();
@@ -74,17 +73,17 @@ window.addEventListener("mousemove", (e) => {
     let differenceY = e.clientY - dragY;
     state.bomb.velocity.x = -differenceX;
     state.bomb.velocity.y = -differenceY;
-    // let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
-    // let k = differenceY / differenceX;
-    // if(state.currentPlayer == 1)
-    // {
-    //   v1.innerHTML = Math.floor(difference);
-    //   a1.innerHTML = -Math.round(Math.atan(k)/ Math.PI * 180);
-    // }
-    // else{
-    //   v2.innerHTML = Math.floor(difference);
-    //   a2.innerHTML = -Math.round(Math.atan(k)/ Math.PI * 180);
-    // }
+    let difference = Math.sqrt(Math.pow(differenceX, 2)+Math.pow(differenceY, 2));
+    let k = differenceY / differenceX;
+    if(state.currentPlayer == 1)
+    {
+      v1.innerHTML = Math.floor(difference);
+      a1.innerHTML = -Math.round(Math.atan(k)/ Math.PI * 180);
+    }
+    else{
+      v2.innerHTML = Math.floor(difference);
+      a2.innerHTML = -Math.round(Math.atan(k)/ Math.PI * 180);
+    }
     draw();
   }
 });
@@ -92,15 +91,15 @@ window.addEventListener("mousemove", (e) => {
 window.addEventListener("mouseup", (e) => {
   if (flag == true) {
     document.body.style.cursor = "default";
-    // if ( state.currentPlayer == 1)
-    // {
-    //   v1.innerHTML = 0;
-    //   a1.innerHTML = 0;
-    // }
-    // else{
-    //   v2.innerHTML = 0;
-    //   a2.innerHTML = 0;
-    // }
+    if ( state.currentPlayer == 1)
+    {
+      v1.innerHTML = 0;
+      a1.innerHTML = 0;
+    }
+    else{
+      v2.innerHTML = 0;
+      a2.innerHTML = 0;
+    }
     flag = false;
     throwBomb();
   }
@@ -239,7 +238,7 @@ function generateBuildings() {
   const minWidth = 80;
   const maxWidth = 150;
   const minHeight = 40; 
-  const maxHeight = 300; 
+  const maxHeight = 200; 
   const minHeightGorilla = 30;
   const maxHeightGorilla = 150;
 
@@ -433,4 +432,10 @@ function updateInfo(str)
 {
   center.style.visibility = "visible";
   center.innerHTML = str;
+}
+
+function changePlayer()
+{
+  celebrate.style.visibility = "hidden";
+  newGame();
 }
