@@ -34,7 +34,6 @@ function newGame() {
       velocity: {x:0, y:0}
     },
     buildings: generateBuildings(),
-    //bb: generateBackBuildings(),
   };
   calculateScale();
   initializeBombPosition();
@@ -239,7 +238,7 @@ function generateBuildings() {
   const minWidth = 80;
   const maxWidth = 150;
   const minHeight = 40; 
-  const maxHeight = 300; 
+  const maxHeight = 200; 
   const minHeightGorilla = 30;
   const maxHeightGorilla = 150;
 
@@ -433,4 +432,10 @@ function updateInfo(str)
 {
   center.style.visibility = "visible";
   center.innerHTML = str;
+}
+
+function changePlayer()
+{
+  celebrate.style.visibility = "hidden";
+  newGame();
 }
